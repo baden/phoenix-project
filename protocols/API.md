@@ -196,6 +196,7 @@
     "collection" : "system",
     "query" : [
         {
+            "key" : "system_id",
             "path" : "title",
             "value" : "Машина сына"
         }
@@ -329,13 +330,11 @@
     "value" : {
         "id" : "$SYS_ID1",
         ...
-        "states" : [
-            {"main" : {
+        "state" : {
                 "current" : "sleep",
                 "available" : ["force", "lock"],
-                "wait_for" : "force"
-            }}
-        ]
+        },
+        "wait_state" : "force"
     }
 }
 ```
@@ -344,9 +343,8 @@
 
 ```json
 {
-    "cmd" : "system_mode",
+    "cmd" : "system_state",
     "id" : "$SYS_ID1",
-    "mode" : "main",
     "value" : "force"
 }
 ```
@@ -380,3 +378,30 @@ CHANGE_STATE:main:force
 ```
 
 По пустому значению в поле "value", сервер удалит это значение из записи о системе.
+
+## Следующий сеанс связи.
+
+Система, при сеансе связи, может сообщить серверу через какое (примерно) время
+будет следующий сеанс связи. Значение указывается в минутах.
+
+
+```
+{POINT_SERVER}/addlog?imei={SYS_ID}&next_session=1440
+```
+
+WEB-клиенту документ будет прислан следующего вида:
+
+```json
+{
+    "cmd" : "document",
+    "collection" : "system",
+    "value" : {
+        "id" : "$SYS_ID1",
+        "last_session" : {
+            "dt" : 12345577,
+            "event" : "log",
+            "next" : 1440
+        }
+    }
+}
+```
