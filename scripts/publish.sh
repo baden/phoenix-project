@@ -9,10 +9,43 @@ sudo dpkg-reconfigure tzdata
 
 
 # Nginx
-sudo apt-get install nginx -y
+sudo apt install nginx -y
+
+# Кажется это уже не надо
 sudo systemctl restart nginx
 sudo systemctl enable nginx
 
+
+# Erlang (вроде же не нужен для работы сервера)
+
+wget https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb
+sudo dpkg -i erlang-solutions_1.0_all.deb
+sudo apt-get update
+sudo apt-get install erlang
+
+
+# MongoDB (Ubuntu 18.04)
+
+wget -qO - https://www.mongodb.org/static/pgp/server-4.2.asc | sudo apt-key add -
+# Если ругнется на gnupg, то:
+# sudo apt-get install gnupg
+echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.2.list
+sudo apt-get update
+sudo apt-get install -y mongodb-org
+sudo systemctl start mongod
+sudo systemctl enable mongod
+
+# Старая инструкция для 4.0
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4
+echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.0.list
+sudo apt-get update
+sudo apt-get install -y mongodb-org
+sudo service mongod start
+sudo systemctl enable mongod
+
+
+
+# Это имеет смысл ставить когда сервер уже настроен
 
 # Certbot
 sudo apt-get install software-properties-common
@@ -40,21 +73,3 @@ sudo certbot --nginx
 #
 #    Donating to ISRG / Let's Encrypt:   https://letsencrypt.org/donate
 #    Donating to EFF:                    https://eff.org/donate-le
-
-
-# Erlang
-
-wget https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb
-sudo dpkg -i erlang-solutions_1.0_all.deb
-sudo apt-get update
-sudo apt-get install erlang
-
-
-# MongoDB (Ubuntu 18.04)
-
-sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4
-echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.0.list
-sudo apt-get update
-sudo apt-get install -y mongodb-org
-sudo service mongod start
-sudo systemctl enable mongod
